@@ -14,8 +14,8 @@ from lib import *
 def print_help():
     print "\nstratus - v0.1.0"
     print "---------------------"
-    print "help   - list all commands"
-    print "logout - exit the program (aliases: exit, quit)"
+    print "  help   - list all commands"
+    print "  logout - exit the program (aliases: exit, quit)"
     navigate.print_help()
     print ""
 
@@ -31,7 +31,7 @@ while running:
         print_help()
     elif cmd in {'exit', 'logout', 'quit'} and len(args) == 1:
         running = False
-    elif cmd in navigate.list_commands():
+    elif cmd in navigate.COMMANDS:
         navigate.process_command(args)
     else:
         print "Error: '" + user_input + "' is not defined."

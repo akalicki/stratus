@@ -4,18 +4,23 @@
 """
 
 import os
+from lib import db
 
-def list_commands():
-    """Returns a list of all navigation commands"""
-    return {'pwd', 'spwd', 'ls', 'sls', 'cd', 'scd', 'smkdir', 'srmdir'}
+COMMANDS = {'pwd', 'spwd', 'ls', 'sls', 'cd', 'scd', 'smkdir', 'srmdir'}
+
+spath = '/'
 
 def print_help():
     """Prints the navigation help prompts"""
     print "\n# Navigation:"
-    print "  pwd  - get path of local directory"
-    print "  spwd - get path of stratus directory"
-    print "  ls   - list files in local directory"
-    print "  sls  - list files in stratus directory"
+    print "  pwd               - get path of local directory"
+    print "  spwd              - get path of stratus directory"
+    print "  ls                - list files in local directory"
+    print "  sls               - list files in stratus directory"
+    print "  cd     [dir_path] - navigate to local directory at dir_path"
+    print "  scd    [dir_path] - navigate to stratus directory at dir_path"
+    print "  smkdir [dir_name] - create stratus directory at current path"
+    print "  srmdir [dir_name] - remove stratus directory at current path"
 
 def process_command(args):
     cmd = args[0]
@@ -44,6 +49,7 @@ def pwd():
 
 def spwd():
     """Prints the absolute path of the current stratus directory"""
+    print spath
 
 def ls():
     """Lists all files and folders in the current local directory"""
@@ -55,20 +61,23 @@ def ls():
 
 def sls():
     """Lists all files and folders in the current stratus directory"""
+    db.listFiles(spath)
 
-def cd(dir_name):
+def cd(dir_path):
     """Move into the given local directory"""
-    path = os.path.expanduser(dir_name)
+    path = os.path.expanduser(dir_path)
     if os.path.isdir(path):
         os.chdir(path)
     else:
         print "Error: '" + cd + "' is not a valid directory."
 
-def scd(dir):
-    """Move into the given stratus directory"""
+def scd(dir_name):
+    """Move into the given stratus directory from the current path"""
 
-def smkdir(dir):
+def smkdir(dir_name):
     """Create a stratus directory from the current path"""
+    db.createDirectory(spath, dir_name)
 
-def srmdir(dir):
+def srmdir(dir_name):
     """Delete a stratus directory at the current path"""
+    db.removeDirectory(spath, dir_name)
