@@ -3,10 +3,11 @@
     Author: Alex Kalicki (https://github.com/akalicki)
 """
 
-from navigate import split_path
-from pymongo import MongoClient
+import pymongo
+import dbox
+import navigate
 
-client = MongoClient()
+client = pymongo.MongoClient()
 db = client.stratus
 
 def directory_exists(parent, name):
@@ -22,8 +23,8 @@ def directory_empty(parent, name):
     return db.dirs.find({'parent': abs_path}).count() == 0
 
 def create_directory(parent, name):
-    """creates stratus directory with given name at the current path"""
-    up_parent, up_name = split_path(parent)
+    """Creates stratus directory with given name at the current path"""
+    up_parent, up_name = navigate.split_path(parent)
     if up_parent is not None and not directory_exists(up_parent, up_name):
         print "Error: '" + up_name + "' is not a valid directory."""
     elif directory_exists(parent, name):
@@ -33,7 +34,7 @@ def create_directory(parent, name):
         db.dirs.insert(new_dir)
 
 def remove_directory(parent, name):
-    """deletes stratus directory with given name at the current path"""
+    """Deletes stratus directory with given name at the current path"""
     if not directory_exists(parent, name):
         print "Error: '" + name + "' is not a valid directory."
     elif not directory_empty(parent, name):
@@ -42,6 +43,15 @@ def remove_directory(parent, name):
         db.dirs.remove({'parent': parent, 'name': name})
 
 def list_files(path):
+    """Lists all folders and files in current stratus directory"""
     dirs = db.dirs.find({'parent': path}, {'name': 1, '_id': 0})
     for directory in dirs:
         print directory['name'] + "/"
+
+def add_account(dbox_id, access_token):
+    """Adds Dropbox account info to the database for future use"""
+    available_space = dbox.account_space(access_token)
+    new_account = {'dbox_id': dbox_id,
+                   'access_token': access_token,
+                   'available_space': available_space}
+    db.accounts.insert(new_account)
