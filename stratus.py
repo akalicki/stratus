@@ -17,6 +17,7 @@ def print_help():
     print "  help   - list all commands"
     print "  logout - exit the program (aliases: exit, quit)"
     navigate.print_help()
+    dbox.print_help()
     print ""
 
 print "\nstratus.py - Free unlimited cloud storage!" 
@@ -33,6 +34,8 @@ while running:
         running = False
     elif cmd in navigate.COMMANDS:
         navigate.process_command(args)
+    elif cmd in dbox.COMMANDS:
+        dbox.process_command(args)
     else:
         print "Error: '" + user_input + "' is not defined."
         print "Enter a valid command or type 'help' to get started."
