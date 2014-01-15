@@ -19,7 +19,8 @@ def directory_empty(parent, name):
         abs_path = name
     else:
         abs_path = parent + '/' + name
-    return db.dirs.find({'parent': abs_path}).count() == 0
+    return (db.dirs.find({'parent': abs_path}).count() == 0 and 
+            db.files.find({'parent': abs_path}).count() == 0)
 
 def create_directory(parent, name):
     """Creates stratus directory with given name in the parent folder"""
@@ -73,6 +74,14 @@ def remove_file(access_token, parent, name):
         updated_space = dbox.account_space(access_token)
         db.accounts.update({'access_token': access_token},
                            {'$set': {'available_space': updated_space}})
+
+def move_file(cur_parent, cur_name, new_parent, new_name):
+    """Moves a file from one location to another"""
+    if not file_exists(cur_parent, cur_name):
+        print "Error: '" + name + "' does not exist."
+    else:
+        db.files.update({'parent': cur_parent, 'name': cur_name},
+                        {'$set': {'parent': new_parent, 'name': new_name}})
 
 def get_access_to_file(parent, name):
     """Returns access token to Dropbox account storing queried file"""

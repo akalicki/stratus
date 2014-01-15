@@ -48,26 +48,47 @@ def put(lpath, spath):
     elif file_size > 2 * 1024 * 1024 * 1024 - ACCOUNT_BUFFER:
         print "Error: individual files must be 2GB or smaller."
     else:   
+        dbox_path = '/' + name
         access_token = accounts.get_useable_account(file_size)
         client = dropbox.client.DropboxClient(access_token)
         lfile = open(lpath)
-        client.put_file('/' + name, lfile)
+        client.put_file(dbox_path, lfile)
         db.add_file(access_token, parent, name)
         lfile.close()
 
 def get(spath, lpath):
     """Downloads file at spath to lpath"""
 
-def mv(old_path, new_path):
+def mv(cur_path, new_path):
     """Moves stratus file from old_path to new_path"""
+    cur_abs = navigate.get_abs_path(cur_path)
+    new_abs = navigate.get_abs_path(new_path)
+    cur_parent, cur_name = navigate.split_path(cur_abs)
+    new_parent, new_name = navigate.split_path(new_abs)
+    up_parent, up_name = navigate.split_path(new_parent)
+    if not db.file_exists(cur_parent, cur_name):
+        print "Error: '" + cur_name + "' does not exist."
+    elif up_parent is not None and not db.directory_exists(up_parent, up_name):
+        print "Error: '" + new_parent + "' is not a valid directory."
+    elif db.file_exists(new_parent, new_name):
+        print "Error: '" + new_name + "' already exists at that location."
+    else:
+        cur_dbox_path = '/' + cur_name
+        new_dbox_path = '/' + new_name
+        access_token = db.get_access_to_file(cur_parent, cur_name)
+        client = dropbox.client.DropboxClient(access_token)
+        client.file_move(cur_dbox_path, new_dbox_path)
+        db.move_file(cur_parent, cur_name, new_parent, new_name)
 
 def link(path):
     """Prints web links to stratus file at given path"""
     abs_path = navigate.get_abs_path(path)
     parent, name = navigate.split_path(abs_path)
-    access_token = db.get_access_to_file(parent, name)
-    if access_token is not None:
+    if not db.file_exists(parent, name):
+        print "Error: '" + path + "' does not exist."
+    else:
         dbox_path = '/' + name
+        access_token = db.get_access_to_file(parent, name)
         client = dropbox.client.DropboxClient(access_token)
         short_link = client.share(dbox_path)['url']
         normal_link = client.share(dbox_path, short_url=False)['url']
