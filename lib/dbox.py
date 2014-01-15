@@ -37,23 +37,23 @@ def process_command(args):
 
 def put(lpath, spath):
     """Uploads file from lpath to spath"""
-    file_size = os.stat(lpath).st_size
-    if file_size > 2 * 1024 * 1024 * 1024 - ACCOUNT_BUFFER:
-        print "Error: individual files must be 2GB or smaller."
-        return
     abs_path = navigate.get_abs_path(spath)
     parent, name = navigate.split_path(abs_path)
     up_parent, up_name = navigate.split_path(parent)
+    file_size = os.stat(lpath).st_size
     if up_parent is not None and not db.directory_exists(up_parent, up_name):
         print "Error: '" + parent + "' is not a valid directory."
-        return
-    
-    access_token = accounts.get_useable_account(file_size)
-    client = dropbox.client.DropboxClient(access_token)
-    lfile = open(lpath)
-    client.put_file('/' + name, lfile)
-    db.add_file(access_token, parent, name)
-    lfile.close()
+    elif db.file_exists(parent, name):
+        print "Error: '" + spath + "' already exists."
+    elif file_size > 2 * 1024 * 1024 * 1024 - ACCOUNT_BUFFER:
+        print "Error: individual files must be 2GB or smaller."
+    else:   
+        access_token = accounts.get_useable_account(file_size)
+        client = dropbox.client.DropboxClient(access_token)
+        lfile = open(lpath)
+        client.put_file('/' + name, lfile)
+        db.add_file(access_token, parent, name)
+        lfile.close()
 
 def get(spath, lpath):
     """Downloads file at spath to lpath"""
@@ -63,9 +63,30 @@ def mv(old_path, new_path):
 
 def link(path):
     """Prints web links to stratus file at given path"""
+    abs_path = navigate.get_abs_path(path)
+    parent, name = navigate.split_path(abs_path)
+    access_token = db.get_access_to_file(parent, name)
+    if access_token is not None:
+        dbox_path = '/' + name
+        client = dropbox.client.DropboxClient(access_token)
+        short_link = client.share(dbox_path)['url']
+        normal_link = client.share(dbox_path, short_url=False)['url']
+        dl_link = normal_link.replace('www.dropbox.com',
+                                      'dl.dropboxusercontent.com', 1)
+        print "short link:     " + short_link
+        print "normal link:    " + normal_link
+        print "download link:  " + dl_link
 
 def rm(path):
     """Deletes stratus file at given path"""
+    abs_path = navigate.get_abs_path(path)
+    parent, name = navigate.split_path(abs_path)
+    access_token = db.get_access_to_file(parent, name)
+    if access_token is not None:
+        dbox_path = '/' + name
+        client = dropbox.client.DropboxClient(access_token)
+        client.file_delete(dbox_path)
+        db.remove_file(access_token, parent, name)
 
 def account_space(access_token):
     """Gets amount of free space in the given account"""

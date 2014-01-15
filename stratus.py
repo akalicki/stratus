@@ -15,7 +15,7 @@ def print_help():
     print "\nstratus - v0.1.0"
     print "---------------------"
     print "  help   - list all commands"
-    print "  logout - exit the program (aliases: exit, quit)"
+    print "  quit - exit the program (aliases: exit, logout)"
     navigate.print_help()
     dbox.print_help()
     print ""

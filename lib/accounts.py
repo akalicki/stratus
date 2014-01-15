@@ -3,9 +3,9 @@
     Author: Alex Kalicki (https://github.com/akalicki)
 """
 
-import names, random, string
+import random, string
+import dropbox, names
 import db, dbox
-import dropbox
 from selenium import webdriver
 from config import config
 

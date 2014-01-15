@@ -94,6 +94,8 @@ def rmdir(path):
 
 def get_abs_path(path):
     """Resolves path into a clean, usable absolute stratus path"""
+    if path == '.':
+        return spath
     abs_path = spath
     if path.startswith('/') or abs_path == '':
         abs_path = path
