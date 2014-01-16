@@ -37,6 +37,7 @@ def process_command(args):
 
 def put(lpath, spath):
     """Uploads file from lpath to spath"""
+    lpath = os.path.expanduser(lpath)
     abs_path = navigate.get_abs_path(spath)
     parent, name = navigate.split_path(abs_path)
     up_parent, up_name = navigate.split_path(parent)
@@ -53,11 +54,26 @@ def put(lpath, spath):
         client = dropbox.client.DropboxClient(access_token)
         lfile = open(lpath)
         client.put_file(dbox_path, lfile)
-        db.add_file(access_token, parent, name)
         lfile.close()
+        db.add_file(access_token, parent, name)
 
 def get(spath, lpath):
     """Downloads file at spath to lpath"""
+    lpath = os.path.expanduser(lpath)
+    abs_path = navigate.get_abs_path(spath)
+    parent, name = navigate.split_path(abs_path)
+    if not db.file_exists(parent, name):
+        print "Error: '" + spath + "' does not exist."
+    elif os.path.isfile(lpath):
+        print "Error: '" + lpath + " already exists."
+    else:
+        dbox_path = '/' + name
+        access_token = db.get_access_to_file(parent, name)
+        client = dropbox.client.DropboxClient(access_token)
+        lfile = open(lpath, 'w')
+        with client.get_file(dbox_path) as f:
+            lfile.write(f.read())
+        lfile.close()
 
 def mv(cur_path, new_path):
     """Moves stratus file from old_path to new_path"""
