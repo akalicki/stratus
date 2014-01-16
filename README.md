@@ -20,7 +20,7 @@ app with files and datastores. The app data folder and name settings are
 up to you.
 3. Execute the following:
 
-```
+ ```
 git clone git@github.com:akalicki/stratus.git
 cd stratus
 npm install -g phantomjs
