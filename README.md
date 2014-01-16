@@ -67,6 +67,17 @@ stratus - v0.1.0
 
 1. Autocomplete to make navigating faster
 2. Some kind of search?
+3. Chunked upload and upload status indication
+
+## Disclaimer
+
+1. Each time stratus needs to generate a new Dropbox account, it takes a bit 
+of time. Please be patient on the first upload and every time you use up 2GB.
+2. Due to Dropbox developer limitations stratus can only create up to 100 
+accounts (200GB of storage) at the present time. Looking for a way around this.
+3. The current upload function only supports individual files of 150MB or 
+smaller. This will be fixed in an upcoming patch when I switch upload 
+protocols.
 
 ## Thanks
 
