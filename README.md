@@ -42,7 +42,7 @@ for the list of commands:
 ```
 stratus - v0.1.0
 ---------------------
-  help   - list all commands
+  help - list all commands
   quit - exit the program (aliases: exit, logout)
 
 # Navigation:
