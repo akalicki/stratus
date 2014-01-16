@@ -91,6 +91,9 @@ def rmdir(path):
     abs_path = get_abs_path(path)
     parent, name = split_path(abs_path)
     db.remove_directory(parent, name)
+    if abs_path == spath:
+        global spath
+        spath = get_abs_path('..')
 
 def get_abs_path(path):
     """Resolves path into a clean, usable absolute stratus path"""
