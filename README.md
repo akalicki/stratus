@@ -69,7 +69,7 @@ stratus - v0.1.0
 2. Some kind of search?
 3. Chunked upload and upload status indication
 
-## Disclaimer
+## Disclaimers
 
 1. Each time stratus needs to generate a new Dropbox account, it takes a bit 
 of time. Please be patient on the first upload and every time you use up 2GB.
