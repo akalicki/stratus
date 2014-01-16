@@ -37,7 +37,31 @@ the strings provided to your app in the Dropbox app console.
 
 The app runs almost identically to the FTP console interface once initialized. 
 From the stratus folder, simply type `python stratus.py` to begin and `help` 
-for a list of commands.
+for the list of commands:
+
+```
+stratus - v0.1.0
+---------------------
+  help   - list all commands
+  quit - exit the program (aliases: exit, logout)
+
+# Navigation:
+  pwd          - get path of stratus directory
+  lpwd         - get path of local directory
+  ls           - list files in stratus directory
+  lls          - list files in local directory
+  cd    [path] - navigate to stratus directory at path
+  lcd   [path] - navigate to local directory at path
+  mkdir [path] - create stratus directory at given path
+  rmdir [path] - remove stratus directory at given path
+
+# File Operations:
+  put  [lpath] [spath] - upload file from lpath to spath
+  get  [spath] [lpath] - download file at spath to lpath
+  mv   [path1] [path2] - move stratus file from path1 to path2
+  link [path]          - get web links to stratus file at given path
+  rm   [path]          - delete stratus file at given path
+```
 
 ## Future Plans
 
